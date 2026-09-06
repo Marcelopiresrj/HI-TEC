@@ -106,7 +106,7 @@ export const AdminStoreSettingsModal: React.FC<AdminStoreSettingsModalProps> = (
                   type="text"
                   value={settings.specialtyTitle || ''}
                   onChange={(e) => setSettings({ ...settings, specialtyTitle: e.target.value })}
-                  placeholder="Montagem e Manutenção de Celulares e Tablets"
+                  placeholder="Montagem e Manutenção de Celulares e Tablets • Venda de Games e Acessórios"
                   className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:border-cyan-400 outline-none"
                 />
               </div>

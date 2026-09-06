@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { CheckCircle2, Copy, Check, Wrench, Phone, Smartphone } from 'lucide-react';
-import { HiTechLogo } from './HiTechLogo';
+import { CheckCircle2, Copy, Check, Wrench, Phone, Smartphone, Gamepad2 } from 'lucide-react';
 import { StoreSettings } from '../types';
+import logoImg from '../assets/images/hitech_logo_circle_1788577271122.jpg';
+import { getStoreStatus } from '../utils/storeStatus';
 
 interface HeaderProfileProps {
   onCopyHandle: () => void;
@@ -17,9 +18,19 @@ export const HeaderProfile: React.FC<HeaderProfileProps> = ({
   onOpenHoursModal,
   storeSettings,
 }) => {
-  const specialtyTitle = storeSettings?.specialtyTitle || 'Montagem e Manutenção de Celulares e Tablets';
+  const specialtyTitle = storeSettings?.specialtyTitle || 'Montagem e Manutenção de Celulares e Tablets • Venda de Games e Acessórios';
   const phoneDisplay = storeSettings?.whatsappDisplay || '(22) 99870-6841';
   const phoneRaw = storeSettings?.whatsappNumber || '22998706841';
+
+  const [status, setStatus] = useState(getStoreStatus());
+
+  useEffect(() => {
+    // Check status every minute
+    const interval = setInterval(() => {
+      setStatus(getStoreStatus());
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <motion.header
@@ -38,8 +49,17 @@ export const HeaderProfile: React.FC<HeaderProfileProps> = ({
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/80 pointer-events-none" />
 
             {/* Official Hi-Tech Logo prominently displayed inside the circle */}
-            <div className="relative z-10 w-full px-2.5 sm:px-3 flex items-center justify-center">
-              <HiTechLogo className="w-full h-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]" />
+            <div className="relative z-10 w-full h-full flex items-center justify-center rounded-full overflow-hidden bg-black/50">
+              {/* Para usar a imagem exata do usuário, faça o upload para o painel de arquivos (src/assets/images/) com o nome "image.png" ou altere o caminho aqui */}
+              <img 
+                src="/logo.png" 
+                alt="Hi-Tech Logo" 
+                onError={(e) => {
+                  // Fallback for when the user hasn't uploaded their image yet
+                  e.currentTarget.src = logoImg;
+                }}
+                className="w-full h-full object-contain scale-[1.2] drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]" 
+              />
             </div>
           </div>
         </div>
@@ -91,13 +111,13 @@ export const HeaderProfile: React.FC<HeaderProfileProps> = ({
           id="status-badge-button"
           onClick={onOpenHoursModal}
           type="button"
-          className="px-4 py-1.5 bg-[#1E293B]/60 rounded-full inline-flex items-center gap-2 border border-white/10 hover:border-emerald-500/40 hover:bg-[#1E293B] transition-all cursor-pointer group"
+          className={`px-4 py-1.5 bg-[#1E293B]/60 rounded-full inline-flex items-center gap-2 border border-white/10 ${status.borderColor} hover:bg-[#1E293B] transition-all cursor-pointer group`}
         >
-          <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
-            Loja Aberta / Atendimento Online
+          <span className={`w-2 h-2 rounded-full ${status.dotColor}`}></span>
+          <span className={`text-[10px] font-bold uppercase tracking-widest ${status.textColor}`}>
+            {status.text}
           </span>
-          <span className="text-[9px] text-slate-400 group-hover:text-emerald-300 pl-1 border-l border-slate-700">
+          <span className={`text-[9px] text-slate-400 group-hover:${status.textColor} pl-1 border-l border-slate-700 transition-colors`}>
             Horários
           </span>
         </button>
@@ -106,30 +126,17 @@ export const HeaderProfile: React.FC<HeaderProfileProps> = ({
       {/* Specialty Title Banner */}
       <div 
         id="store-specialty-banner"
-        className="w-full max-w-[360px] px-3 py-2 rounded-xl bg-gradient-to-r from-cyan-500/15 via-blue-500/10 to-purple-500/15 border border-cyan-500/30 text-center shadow-[0_0_20px_rgba(0,242,254,0.08)] mb-2.5 backdrop-blur-sm"
+        className="w-full max-w-[420px] px-3 py-2 rounded-xl bg-gradient-to-r from-cyan-500/15 via-blue-500/10 to-purple-500/15 border border-cyan-500/30 text-center shadow-[0_0_20px_rgba(0,242,254,0.08)] mb-2.5 backdrop-blur-sm"
       >
         <div className="flex items-center justify-center gap-2 text-cyan-300">
-          <Wrench className="w-4 h-4 flex-shrink-0 text-cyan-400" />
+          <div className="flex items-center gap-1 flex-shrink-0 text-cyan-400">
+            <Wrench className="w-4 h-4" />
+            <Gamepad2 className="w-4 h-4" />
+          </div>
           <h2 className="text-xs sm:text-[13px] font-bold tracking-tight text-white leading-tight uppercase font-['Outfit']">
             {specialtyTitle}
           </h2>
         </div>
-      </div>
-
-      {/* Telephone Direct Call Action */}
-      <div className="mb-3 flex items-center justify-center">
-        <a
-          id="store-tel-link"
-          href={`tel:${phoneRaw}`}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-emerald-300 hover:text-emerald-100 transition-all text-xs font-bold shadow-[0_0_15px_rgba(16,185,129,0.12)] group cursor-pointer"
-          title="Clique para ligar agora"
-        >
-          <Phone className="w-3.5 h-3.5 text-emerald-400 group-hover:rotate-12 transition-transform" />
-          <span>Tel: {phoneDisplay}</span>
-          <span className="text-[10px] uppercase font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-200">
-            Ligar
-          </span>
-        </a>
       </div>
 
       {/* Services List / Badges: Troca de Telas, Touch, Conectores, Microfone, Baterias, Câmeras e Alto-falantes */}

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Clock, MapPin, Phone, ShieldCheck, CheckCircle2, Navigation, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { WhatsAppIcon } from './Icons';
 import { StoreSettings } from '../types';
+import { getStoreStatus } from '../utils/storeStatus';
 
 interface HoursModalProps {
   isOpen: boolean;
@@ -18,6 +19,15 @@ export const HoursModal: React.FC<HoursModalProps> = ({
   storeSettings,
 }) => {
   const [showAllDays, setShowAllDays] = useState(true);
+  const [status, setStatus] = useState(getStoreStatus());
+
+  useEffect(() => {
+    if (isOpen) {
+      setStatus(getStoreStatus());
+      const interval = setInterval(() => setStatus(getStoreStatus()), 60000);
+      return () => clearInterval(interval);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -73,23 +83,29 @@ export const HoursModal: React.FC<HoursModalProps> = ({
           </div>
 
           {/* Status banner */}
-          <div className="my-3.5 p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-between gap-3">
+          <div className={`my-3.5 p-3 rounded-xl border flex items-center justify-between gap-3 ${status.isOpen ? 'bg-emerald-950/40 border-emerald-500/30' : 'bg-rose-950/40 border-rose-500/30'}`}>
             <div className="flex items-center gap-2.5">
               <span className="relative flex h-3 w-3 flex-shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400"></span>
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${status.isOpen ? 'bg-emerald-400' : 'bg-rose-400'}`}></span>
+                <span className={`relative inline-flex rounded-full h-3 w-3 ${status.isOpen ? 'bg-emerald-400' : 'bg-rose-400'}`}></span>
               </span>
               <div>
-                <p className="text-xs font-bold text-emerald-300">Atendimento Ativo</p>
-                <p className="text-[11px] text-emerald-400/80">WhatsApp e Balcão em Rio das Ostras</p>
+                <p className={`text-xs font-bold ${status.isOpen ? 'text-emerald-300' : 'text-rose-300'}`}>
+                  {status.isOpen ? 'Atendimento Ativo' : 'Loja Fechada'}
+                </p>
+                <p className={`text-[11px] ${status.isOpen ? 'text-emerald-400/80' : 'text-rose-400/80'}`}>
+                  {status.isOpen ? 'WhatsApp e Balcão em Rio das Ostras' : 'Retornaremos no próximo dia útil'}
+                </p>
               </div>
             </div>
             <a
-              href={`tel:${phoneRaw}`}
-              className="flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 transition-colors whitespace-nowrap"
+              href={status.isOpen ? `tel:${phoneRaw}` : whatsappUrl}
+              target={!status.isOpen ? "_blank" : undefined}
+              rel={!status.isOpen ? "noopener noreferrer" : undefined}
+              className={`flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-lg transition-colors whitespace-nowrap border ${status.isOpen ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border-rose-500/30 hover:bg-rose-500/30'}`}
             >
-              <Phone className="w-3 h-3" />
-              <span>Ligar</span>
+              {status.isOpen ? <Phone className="w-3 h-3" /> : <WhatsAppIcon className="w-3 h-3 fill-current" />}
+              <span>{status.isOpen ? 'Ligar' : 'Mensagem'}</span>
             </a>
           </div>
 

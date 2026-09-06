@@ -243,19 +243,7 @@ export default function App() {
 
             {/* Links & CTA Cards Section */}
             <section id="links-container" className="w-full flex flex-col gap-3 my-1">
-              {/* 1. WhatsApp - Botão Principal / Destaque de Alta Conversão */}
-              <LinkCard
-                id="link-whatsapp-main"
-                title="Atendimento via WhatsApp"
-                subtitle={`Orçamento rápido e suporte: ${storeSettings.whatsappDisplay}`}
-                url={whatsappUrl}
-                iconType="whatsapp"
-                highlight={true}
-                badge="Online Agora"
-                delayIndex={0}
-              />
-
-              {/* 2. Instagram Oficial */}
+              {/* 1. Instagram Oficial */}
               <LinkCard
                 id="link-instagram-official"
                 title="Siga no Instagram"
@@ -263,10 +251,10 @@ export default function App() {
                 url={instagramUrl}
                 iconType="instagram"
                 badge="Oficial"
-                delayIndex={1}
+                delayIndex={0}
               />
 
-              {/* 3. Avalie no Google (Social Proof) */}
+              {/* 2. Avalie no Google (Social Proof) */}
               <LinkCard
                 id="link-google-reviews"
                 title="Avalie Nossa Loja no Google"
@@ -274,17 +262,17 @@ export default function App() {
                 url={googleReviewUrl}
                 iconType="google"
                 badge="5.0 ★"
-                delayIndex={2}
+                delayIndex={1}
               />
 
-              {/* 4. Localização e Informações de Retirada */}
+              {/* 3. Localização e Informações de Retirada */}
               <LinkCard
                 id="link-location-info"
                 title="Localização & Horários de Funcionamento"
                 subtitle="Jardim Marileia, Rio das Ostras - Ver horários e rota"
                 onClick={() => setIsHoursModalOpen(true)}
                 iconType="location"
-                delayIndex={3}
+                delayIndex={2}
               />
             </section>
 

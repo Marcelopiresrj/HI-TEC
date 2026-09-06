@@ -175,7 +175,7 @@ export async function recoverPassword(
 export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   storeName: 'Hi-Tech Eletrônicos',
   storeHandle: '@hitecheletronicos',
-  specialtyTitle: 'Montagem e Manutenção de Celulares e Tablets',
+  specialtyTitle: 'Montagem e Manutenção de Celulares e Tablets • Venda de Games e Acessórios',
   servicesDescription: 'Troca de Telas, Touch, Conectores, Microfone, Baterias, Câmeras e Alto-falantes',
   whatsappNumber: '5522998706841',
   whatsappDisplay: '(22) 99870-6841',
@@ -209,6 +209,9 @@ export function getStoreSettings(): StoreSettings {
     }
     if (!parsed.holidayNote) {
       parsed.holidayNote = DEFAULT_STORE_SETTINGS.holidayNote;
+    }
+    if (parsed.specialtyTitle === 'Montagem e Manutenção de Celulares e Tablets') {
+      parsed.specialtyTitle = DEFAULT_STORE_SETTINGS.specialtyTitle;
     }
 
     return { ...DEFAULT_STORE_SETTINGS, ...parsed };
